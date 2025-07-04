@@ -64,7 +64,7 @@ struct FeedView: View {
                     .padding(.bottom, 8)
                 }
                 // Main Area
-                Group {
+                ZStack {
                     switch selectedTab {
                     case .online:
                         GeometryReader { geometry in
@@ -86,14 +86,19 @@ struct FeedView: View {
                                 .padding(.bottom, 50)
                             }
                         }
+                        .transition(.opacity)
                     case .popular:
                         Color.green.ignoresSafeArea()
+                            .transition(.opacity)
                     case .new:
                         Color.indigo.ignoresSafeArea()
+                            .transition(.opacity)
                     case .following:
                         Color.purple.ignoresSafeArea()
+                            .transition(.opacity)
                     }
                 }
+                .animation(.easeInOut(duration: 0.3), value: selectedTab)
                 Spacer()
             }
             .background(Color.white.edgesIgnoringSafeArea(.all))

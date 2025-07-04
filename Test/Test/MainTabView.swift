@@ -27,18 +27,23 @@ struct MainTabView: View {
 
     var body: some View {
         ZStack(alignment: .bottom) {
-            Group {
+            ZStack {
                 switch selectedTab {
                 case .live:
                     Color.pink.ignoresSafeArea()
+                        .transition(.opacity)
                 case .feed:
                     FeedModuleBuilder.build()
+                        .transition(.opacity)
                 case .chat:
                     Color.indigo.ignoresSafeArea()
+                        .transition(.opacity)
                 case .profile:
                     Color.purple.ignoresSafeArea()
+                        .transition(.opacity)
                 }
             }
+            .animation(.easeInOut(duration: 0.3), value: selectedTab)
             CustomTabBar(selectedTab: $selectedTab)
         }.ignoresSafeArea(edges: .bottom)
     }
