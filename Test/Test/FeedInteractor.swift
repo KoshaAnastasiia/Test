@@ -2,16 +2,36 @@ import Foundation
 
 class FeedInteractor: FeedInteractorProtocol {
     weak var output: FeedInteractorOutputProtocol?
+    let service = FeedService()
 
     func fetchUsers() {
-        let users = [
-            FeedUser(name: "Anita", age: 18, countryFlag: "🇪🇸", imageUrl: "anita.jpg", status: .online),
-            FeedUser(name: "Samanta", age: 25, countryFlag: "🇪🇸", imageUrl: "samanta.jpg", status: .offline),
-            FeedUser(name: "Carmen", age: 32, countryFlag: "🇪🇸", imageUrl: "carmen.jpg", status: .recently),
-            FeedUser(name: "Soldead", age: 23, countryFlag: "🇪🇸", imageUrl: "soldead.jpg", status: .online)
-        ]
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-            self.output?.didFetchUsers(users)
+        service.fetchUsers { [weak self] result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let jsonUsers):
+                    let users: [FeedUser] = jsonUsers.compactMap { json in
+                        FeedUser(
+                            name: json.name,
+                            age: json.age,
+                            countryFlag: json.countryFlag,
+                            imageUrl: json.imageUrl,
+                            status: FeedInteractor.statusFromString(json.status)
+                        )
+                    }
+                    self?.output?.didFetchUsers(users)
+                case .failure(let error):
+                    self?.output?.didFailToFetchUsers(error: error)
+                }
+            }
+        }
+    }
+
+    private static func statusFromString(_ str: String) -> UserStatus {
+        switch str.lowercased() {
+        case "online": return .online
+        case "offline": return .offline
+        case "recently": return .recently
+        default: return .offline
         }
     }
 } 

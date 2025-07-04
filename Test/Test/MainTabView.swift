@@ -14,10 +14,10 @@ enum MainTab: Int, CaseIterable {
 
     var icon: String {
         switch self {
-        case .live: return "video"
-        case .feed: return "person.crop.square"
-        case .chat: return "bubble.left.and.bubble.right"
-        case .profile: return "person"
+        case .live: return "icon.life"
+        case .feed: return "icon.feed"
+        case .chat: return "icon.chat.tab"
+        case .profile: return "icon.profile"
         }
     }
 }
@@ -46,19 +46,18 @@ struct MainTabView: View {
 
 struct CustomTabBar: View {
     @Binding var selectedTab: MainTab
+    
     var body: some View {
         HStack(alignment: .top) {
             ForEach(MainTab.allCases, id: \.self) { tab in
                 Spacer()
                 Button(action: { selectedTab = tab }) {
                     VStack(spacing: 4) {
-                        Image(systemName: tab.icon)
-                            .font(.system(size: 26, weight: .regular))
-                            .foregroundColor(selectedTab == tab ? Color(red: 24/255, green: 22/255, blue: 54/255) : Color(red: 186/255, green: 191/255, blue: 206/255))
+                        Image(tab.icon)
+                            .renderingMode(.template)
                         Text(tab.title)
                             .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(selectedTab == tab ? Color(red: 24/255, green: 22/255, blue: 54/255) : Color(red: 186/255, green: 191/255, blue: 206/255))
-                    }
+                    }.foregroundColor(selectedTab == tab ? Color(red: 24/255, green: 22/255, blue: 54/255) : Color(red: 186/255, green: 191/255, blue: 206/255))
                 }
                 Spacer()
             }

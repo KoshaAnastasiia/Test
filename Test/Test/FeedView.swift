@@ -11,11 +11,11 @@ struct FeedView: View {
     @ObservedObject var presenter: FeedPresenter
     @State private var selectedTab: FeedTab = .online
     let badgeCount: Int = 78
-    let horizontalPadding: CGFloat = 16
+    let horizontalPadding: CGFloat = 12
     let gridSpacing: CGFloat = 12
     let columns = 2
     let cardAspectRatio: CGFloat = 1.21
-
+    
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
@@ -75,7 +75,7 @@ struct FeedView: View {
                             ScrollView {
                                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: gridSpacing) {
                                     ForEach(presenter.users) { user in
-                                        UserCardView(user: user) {
+                                        UserCardView(user: user, cardWidth: cardWidth) {
                                             presenter.didSelectUser(user)
                                         }
                                         .frame(width: cardWidth, height: cardHeight)
@@ -83,14 +83,15 @@ struct FeedView: View {
                                 }
                                 .padding(.horizontal, horizontalPadding)
                                 .padding(.vertical, 12)
+                                .padding(.bottom, 50)
                             }
                         }
                     case .popular:
                         Color.green.ignoresSafeArea()
                     case .new:
-                        Color.blue.ignoresSafeArea()
+                        Color.indigo.ignoresSafeArea()
                     case .following:
-                        Color.red.ignoresSafeArea()
+                        Color.purple.ignoresSafeArea()
                     }
                 }
                 Spacer()
@@ -105,27 +106,58 @@ struct FeedView: View {
 
 struct UserCardView: View {
     let user: FeedUser
+    let cardWidth: CGFloat
     let onTap: () -> Void
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            ZStack(alignment: .topLeading) {
-                Rectangle().fill(Color.gray.opacity(0.2)).aspectRatio(1, contentMode: .fit)
-                Text(user.status == .online ? "online" : user.status == .offline ? "offline" : "recently")
-                    .font(.caption2).padding(6).background(Color.black.opacity(0.6)).foregroundColor(.white).cornerRadius(8).padding(6)
-            }
-            HStack {
-                Text(user.countryFlag)
-                Text("\(user.name), \(user.age)").bold()
-            }
-            HStack {
-                Image(systemName: "message")
-                Image(systemName: "video")
-                Image(systemName: "heart")
+        AsyncImage(url: URL(string: user.imageUrl)) { image in
+            image
+                .resizable()
+                .scaledToFill()
+                .frame(width: cardWidth, height: cardWidth + 40)
+                .cornerRadius(16)
+                .shadow(radius: 2)
+        } placeholder: {
+            Rectangle().fill(Color.gray.opacity(0.2))
+        }
+        .overlay {
+            VStack(alignment: .leading) {
+                HStack {
+                    Circle().fill(user.status.color)
+                        .frame(width: 7)
+                    Text(user.status.rawValue)
+                        .font(.caption2)
+                        .foregroundColor(.white)
+                }
+                .padding(6)
+                .background(Color.black.opacity(0.6))
+                .cornerRadius(55)
+                .padding(9)
+                Spacer()
+                HStack {
+                    Spacer()
+                    Text(user.countryFlag)
+                        .font(.system(.headline))
+                        .clipShape(.circle)
+                    Text("\(user.name), \(user.age)")
+                        .font(.subheadline)
+                        .foregroundColor(.white)
+                    Spacer()
+                }
+                HStack(spacing: 22) {
+                    Spacer()
+                    Button(action: { print("tap on \(user.name) chat") }) {
+                        Image("icon.chat")
+                    }.buttonStyle(PlainButtonStyle())
+                    Button(action: { print("tap on \(user.name) video") }) {
+                        Image("icon.video")
+                    }.buttonStyle(PlainButtonStyle())
+                    Button(action: { print("tap on \(user.name) favorite") }) {
+                        Image("icon.favorite")
+                    }.buttonStyle(PlainButtonStyle())
+                    Spacer()
+                }.padding(.bottom, 9)
             }
         }
-        .background(Color.white)
-        .cornerRadius(16)
-        .shadow(radius: 2)
         .onTapGesture { onTap() }
     }
-} 
+}
