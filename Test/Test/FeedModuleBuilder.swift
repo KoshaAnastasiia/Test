@@ -8,7 +8,6 @@ struct FeedModuleBuilder {
         presenter.interactor = interactor
         presenter.router = router
         interactor.output = presenter
-        let view = FeedView(presenter: presenter)
-        return view
+        return FeedView(presenter: presenter, router: router)
     }
 } 

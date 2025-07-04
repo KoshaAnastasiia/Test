@@ -7,7 +7,7 @@ protocol FeedViewProtocol: AnyObject {
 
 protocol FeedPresenterProtocol: AnyObject {
     func viewDidLoad()
-    func didSelectUser(_ user: FeedUser)
+    func didSelectUser(_ user: FeedUser, at index: Int)
 }
 
 protocol FeedInteractorProtocol: AnyObject {

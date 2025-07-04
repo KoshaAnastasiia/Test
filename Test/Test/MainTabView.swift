@@ -61,8 +61,8 @@ struct CustomTabBar: View {
                         Image(tab.icon)
                             .renderingMode(.template)
                         Text(tab.title)
-                            .font(.system(size: 14, weight: .medium))
-                    }.foregroundColor(selectedTab == tab ? Color(red: 24/255, green: 22/255, blue: 54/255) : Color(red: 186/255, green: 191/255, blue: 206/255))
+                            .font(.system(size: 12, weight: .medium))
+                    }.foregroundStyle(selectedTab == tab ? Color.rgba(25, 20, 57, 1) : Color.rgba(175, 182, 200, 1))
                 }
                 Spacer()
             }

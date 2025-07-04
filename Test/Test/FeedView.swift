@@ -9,6 +9,7 @@ enum FeedTab: String, CaseIterable {
 
 struct FeedView: View {
     @ObservedObject var presenter: FeedPresenter
+    @ObservedObject var router: FeedRouter
     @State private var selectedTab: FeedTab = .online
     let badgeCount: Int = 78
     let horizontalPadding: CGFloat = 12
@@ -23,19 +24,19 @@ struct FeedView: View {
                 VStack(alignment: .leading, spacing: 0) {
                     HStack(alignment: .center) {
                         Text("Feed")
-                            .font(.system(size: 28, weight: .bold))
-                            .foregroundColor(Color(red: 24/255, green: 22/255, blue: 54/255))
+                            .font(.system(size: 30, weight: .bold))
+                            .foregroundStyle(Color.rgba(25, 20, 57, 1))
                         Spacer()
                         HStack(spacing: 6) {
                             Text("\(badgeCount)")
-                                .foregroundColor(.white)
+                                .foregroundStyle(Color.white)
                                 .font(.system(size: 16, weight: .semibold))
                             ZStack {
                                 Circle()
                                     .fill(Color(red: 1.0, green: 0.8, blue: 0.2))
                                     .frame(width: 22, height: 22)
                                 Image(systemName: "star.fill")
-                                    .foregroundColor(.white)
+                                    .foregroundStyle(Color.white)
                                     .font(.system(size: 13, weight: .bold))
                             }
                         }
@@ -54,8 +55,8 @@ struct FeedView: View {
                             }) {
                                 Text(tab.rawValue)
                                     .font(.system(size: 20, weight: selectedTab == tab ? .bold : .regular))
-                                    .foregroundColor(selectedTab == tab ? Color(red: 24/255, green: 22/255, blue: 54/255) : Color(red: 186/255, green: 191/255, blue: 206/255))
-                                    .padding(.trailing, tab == .following ? 0 : 30)
+                                    .foregroundStyle(selectedTab == tab ? Color.rgba(25, 20, 57, 1) : Color.rgba(175, 182, 200, 1))
+                                    .padding(.trailing, tab == .following ? 0 : 33)
                             }
                         }
                     }
@@ -74,9 +75,9 @@ struct FeedView: View {
                             let cardHeight = cardWidth * cardAspectRatio
                             ScrollView {
                                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: gridSpacing) {
-                                    ForEach(presenter.users) { user in
+                                    ForEach(Array(presenter.users.enumerated()), id: \.element.id) { index, user in
                                         UserCardView(user: user, cardWidth: cardWidth) {
-                                            presenter.didSelectUser(user)
+                                            presenter.didSelectUser(user, at: index)
                                         }
                                         .frame(width: cardWidth, height: cardHeight)
                                     }
@@ -84,6 +85,13 @@ struct FeedView: View {
                                 .padding(.horizontal, horizontalPadding)
                                 .padding(.vertical, 12)
                                 .padding(.bottom, 50)
+                                NavigationLink(
+                                    destination: PaywallCarouselView(),
+                                    isActive: Binding(
+                                        get: { router.route == .paywall },
+                                        set: { isActive in if !isActive { router.resetRoute() } }
+                                    )
+                                ) { EmptyView() }
                             }
                         }
                         .transition(.opacity)
@@ -130,8 +138,8 @@ struct UserCardView: View {
                     Circle().fill(user.status.color)
                         .frame(width: 7)
                     Text(user.status.rawValue)
-                        .font(.caption2)
-                        .foregroundColor(.white)
+                        .font(.system(size: 12, weight: .light))
+                        .foregroundStyle(Color.white)
                 }
                 .padding(6)
                 .background(Color.black.opacity(0.6))
@@ -141,11 +149,13 @@ struct UserCardView: View {
                 HStack {
                     Spacer()
                     Text(user.countryFlag)
-                        .font(.system(.headline))
+                        .frame(width: 30, height: 20)
+                        .font(.system(size: 40, weight: .bold))
                         .clipShape(.circle)
                     Text("\(user.name), \(user.age)")
-                        .font(.subheadline)
-                        .foregroundColor(.white)
+                        .font(.system(size: 16, weight: .bold))
+                        .foregroundStyle(Color.white)
+                        .padding(.trailing, 7)
                     Spacer()
                 }
                 HStack(spacing: 22) {

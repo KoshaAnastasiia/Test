@@ -3,7 +3,7 @@ import Foundation
 class FeedPresenter: ObservableObject, FeedPresenterProtocol {
     weak var view: FeedViewProtocol?
     var interactor: FeedInteractorProtocol?
-    var router: FeedRouterProtocol?
+    var router: FeedRouter?
 
     @Published var users: [FeedUser] = []
     @Published var errorMessage: String? = nil
@@ -12,8 +12,12 @@ class FeedPresenter: ObservableObject, FeedPresenterProtocol {
         interactor?.fetchUsers()
     }
 
-    func didSelectUser(_ user: FeedUser) {
-        router?.navigateToUserProfile(user)
+    func didSelectUser(_ user: FeedUser, at index: Int) {
+        if index == 0 {
+            router?.showPaywall()
+        } else {
+            router?.navigateToUserProfile(user)
+        }
     }
 }
 
@@ -27,4 +31,4 @@ extension FeedPresenter: FeedInteractorOutputProtocol {
         self.errorMessage = error.localizedDescription
         view?.showError(error.localizedDescription)
     }
-} 
+}
