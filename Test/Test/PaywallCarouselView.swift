@@ -8,23 +8,23 @@ struct PaywallScreen: Identifiable {
 
 struct PaywallCarouselView: View {
     let screens: [PaywallScreen] = [
-        PaywallScreen(
-            imageName: "payscreen.first",
-            title: try! AttributedString(markdown: "Get **599 Coins** NOW And Every Week")
-        ),
-        PaywallScreen(
-            imageName: "payscreen.second",
-            title: try! AttributedString(markdown: "Send **Unlimited Messages**")
-        ),
-        PaywallScreen(
-            imageName: "payscreen.third",
-            title: try! AttributedString(markdown: "Turn Off **Camera & Sound**")
-        ),
-        PaywallScreen(
-            imageName: "payscreen.forth",
-            title: try! AttributedString(markdown: "Mark Your Profile With **VIP Status**")
-        )
-    ]
+            PaywallScreen(
+                imageName: "payscreen.first",
+                title: "Get 599 Coins NOW And Every Week".makeAttributedForPaywallTitle(selected: "599 Coins")
+            ),
+            PaywallScreen(
+                imageName: "payscreen.second",
+                title: "Send Unlimited Messages".makeAttributedForPaywallTitle(selected: "Unlimited Messages")
+            ),
+            PaywallScreen(
+                imageName: "payscreen.third",
+                title: "Turn Off Camera & Sound".makeAttributedForPaywallTitle(selected: "Camera & Sound")
+            ),
+            PaywallScreen(
+                imageName: "payscreen.forth",
+                title: "Mark Your Profile With VIP Status".makeAttributedForPaywallTitle(selected: "VIP Status")
+            )
+        ]
 
     @Environment(\.presentationMode) var presentationMode
     @State private var selectedIndex: Int = 0

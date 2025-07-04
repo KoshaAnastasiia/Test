@@ -12,3 +12,12 @@ extension Color {
     }
 }
 
+extension String {
+    func makeAttributedForPaywallTitle(selected: String) -> AttributedString {
+        var attributedString = AttributedString(self)
+        if let range = attributedString.range(of: selected) {
+            attributedString[range].foregroundColor = .pink
+        }
+        return attributedString
+    }
+}
