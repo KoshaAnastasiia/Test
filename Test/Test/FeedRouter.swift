@@ -8,6 +8,7 @@ enum FeedRoute: Equatable {
 
 class FeedRouter: ObservableObject, FeedRouterProtocol {
     @Published var route: FeedRoute? = nil
+    @Published var isShowedPaywallSheet: Bool = false
 
     func showPaywall() {
         route = .paywall
@@ -15,6 +16,14 @@ class FeedRouter: ObservableObject, FeedRouterProtocol {
 
     func resetRoute() {
         route = nil
+    }
+
+    func showPaywallSheet() {
+        isShowedPaywallSheet = true
+    }
+
+    func hidePaywallSheet() {
+        isShowedPaywallSheet = false
     }
 
     func navigateToUserProfile(_ user: FeedUser) {

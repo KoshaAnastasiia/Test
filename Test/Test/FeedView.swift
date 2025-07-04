@@ -85,13 +85,6 @@ struct FeedView: View {
                                 .padding(.horizontal, horizontalPadding)
                                 .padding(.vertical, 12)
                                 .padding(.bottom, 50)
-                                NavigationLink(
-                                    destination: PaywallCarouselView(),
-                                    isActive: Binding(
-                                        get: { router.route == .paywall },
-                                        set: { isActive in if !isActive { router.resetRoute() } }
-                                    )
-                                ) { EmptyView() }
                             }
                         }
                         .transition(.opacity)
@@ -112,6 +105,9 @@ struct FeedView: View {
             .background(Color.white.edgesIgnoringSafeArea(.all))
             .onAppear {
                 presenter.viewDidLoad()
+            }
+            .sheet(isPresented: $router.isShowedPaywallSheet) {
+                PaywallCarouselView()
             }
         }
     }

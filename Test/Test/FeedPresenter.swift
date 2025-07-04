@@ -14,7 +14,7 @@ class FeedPresenter: ObservableObject, FeedPresenterProtocol {
 
     func didSelectUser(_ user: FeedUser, at index: Int) {
         if index == 0 {
-            router?.showPaywall()
+            router?.showPaywallSheet()
         } else {
             router?.navigateToUserProfile(user)
         }

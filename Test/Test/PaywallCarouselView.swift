@@ -44,14 +44,14 @@ struct PaywallCarouselView: View {
                         .foregroundStyle(Color.rgba(175, 182, 200, 1))
                 }
             }
-            .padding(.top, 10)
-            .padding(.bottom, 10)
+            .padding(.top, 45)
+            .padding(.bottom, 30)
             .padding(.horizontal, 16)
             TabView(selection: $selectedIndex) {
                 ForEach(Array(screens.enumerated()), id: \.element.id) { idx, screen in
                     VStack(spacing: 0) {
                         Text(screen.title)
-                            .font(.system(size: 18, weight: .heavy))
+                            .font(.system(size: 23, weight: .heavy))
                             .multilineTextAlignment(.center)
                             .frame(width: 331, height: 58)
                         Image(screen.imageName)
@@ -67,14 +67,14 @@ struct PaywallCarouselView: View {
                         .fill(idx == selectedIndex ? Color.rgba(157, 153, 255, 1) : Color.rgba(175, 182, 200, 1))
                         .frame(width: 8, height: 8)
                 }
-            }
+            }.padding(.top, 30)
             Spacer()
             VStack(spacing: 0) {
                 Text("Subscribe for $0.99 weekly")
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundStyle(Color.white)
                     .padding(.bottom, 6)
-                    .padding(.top, 60)
+                    .padding(.top, 45)
                 Text("Plan automatically renews. Cancel anytime.")
                     .font(.system(size: 14, weight: .regular))
                     .foregroundStyle(Color.white)
@@ -103,7 +103,7 @@ struct PaywallCarouselView: View {
                             .underline()
                             .foregroundStyle(Color.white)
                     }
-                }.padding(.bottom, 90)
+                }.padding(.bottom, 45)
             }.padding(.horizontal, 16)
                 .background(
                     GeometryReader { geometry in
