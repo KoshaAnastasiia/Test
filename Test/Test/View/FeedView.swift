@@ -1,21 +1,22 @@
 import SwiftUI
 
-enum FeedTab: String, CaseIterable {
-    case online = "Online"
-    case popular = "Popular"
-    case new = "New"
-    case following = "Following"
-}
-
 struct FeedView: View {
+    enum FeedTab: String, CaseIterable {
+        case online = "Online"
+        case popular = "Popular"
+        case new = "New"
+        case following = "Following"
+    }
+
     @ObservedObject var presenter: FeedPresenter
     @ObservedObject var router: FeedRouter
     @State private var selectedTab: FeedTab = .online
-    let badgeCount: Int = 78
-    let horizontalPadding: CGFloat = 12
-    let gridSpacing: CGFloat = 12
-    let columns = 2
-    let cardAspectRatio: CGFloat = 1.21
+    
+    private let badgeCount: Int = 78
+    private let horizontalPadding: CGFloat = 12
+    private let gridSpacing: CGFloat = 12
+    private let columns = 2
+    private let cardAspectRatio: CGFloat = 1.21
     
     var body: some View {
         NavigationView {
@@ -68,26 +69,36 @@ struct FeedView: View {
                 ZStack {
                     switch selectedTab {
                     case .online:
-                        GeometryReader { geometry in
-                            let totalSpacing = gridSpacing * CGFloat(columns - 1)
-                            let totalPadding = horizontalPadding * 2
-                            let cardWidth = (geometry.size.width - totalPadding - totalSpacing) / CGFloat(columns)
-                            let cardHeight = cardWidth * cardAspectRatio
-                            ScrollView {
-                                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: gridSpacing) {
-                                    ForEach(Array(presenter.users.enumerated()), id: \.element.id) { index, user in
-                                        UserCardView(user: user, cardWidth: cardWidth) {
-                                            presenter.didSelectUser(user, at: index)
+                        if let errorMessage = presenter.errorMessage {
+                            Text(errorMessage)
+                        } else {
+                            GeometryReader { geometry in
+                                let totalSpacing = gridSpacing * CGFloat(columns - 1)
+                                let totalPadding = horizontalPadding * 2
+                                let cardWidth = (geometry.size.width - totalPadding - totalSpacing) / CGFloat(columns)
+                                let cardHeight = cardWidth * cardAspectRatio
+                                ScrollView {
+                                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: gridSpacing) {
+                                        ForEach(Array(presenter.users.enumerated()), id: \.element.id) { index, user in
+                                            UserCardView(user: user, cardWidth: cardWidth) {
+                                                presenter.didSelectUser(user, at: index)
+                                            } onChatTap: {
+                                                presenter.didSelectUserChat(user)
+                                            } onVideoTap: {
+                                                presenter.didSelectUserVideo(user)
+                                            } onFavouriteTap: {
+                                                presenter.didSelectUserFavourite(user)
+                                            }
+                                            .frame(width: cardWidth, height: cardHeight)
                                         }
-                                        .frame(width: cardWidth, height: cardHeight)
                                     }
+                                    .padding(.horizontal, horizontalPadding)
+                                    .padding(.vertical, 12)
+                                    .padding(.bottom, 50)
                                 }
-                                .padding(.horizontal, horizontalPadding)
-                                .padding(.vertical, 12)
-                                .padding(.bottom, 50)
                             }
+                            .transition(.opacity)
                         }
-                        .transition(.opacity)
                     case .popular:
                         Color.green.ignoresSafeArea()
                             .transition(.opacity)
@@ -106,9 +117,11 @@ struct FeedView: View {
             .onAppear {
                 presenter.viewDidLoad()
             }
-            .sheet(isPresented: $router.isShowedPaywallSheet) {
-                PaywallCarouselView()
-            }
+            .sheet(item: $router.sheetRoute, content: { item in
+                switch item {
+                case .paywall: PaywallCarouselView()
+                }
+            })
         }
     }
 }
@@ -117,6 +130,10 @@ struct UserCardView: View {
     let user: FeedUser
     let cardWidth: CGFloat
     let onTap: () -> Void
+    let onChatTap: () -> Void
+    let onVideoTap: () -> Void
+    let onFavouriteTap: () -> Void
+
     var body: some View {
         AsyncImage(url: URL(string: user.imageUrl)) { image in
             image
@@ -156,13 +173,13 @@ struct UserCardView: View {
                 }
                 HStack(spacing: 22) {
                     Spacer()
-                    Button(action: { print("tap on \(user.name) chat") }) {
+                    Button(action: onChatTap) {
                         Image("icon.chat")
                     }.buttonStyle(PlainButtonStyle())
-                    Button(action: { print("tap on \(user.name) video") }) {
+                    Button(action: onVideoTap) {
                         Image("icon.video")
                     }.buttonStyle(PlainButtonStyle())
-                    Button(action: { print("tap on \(user.name) favorite") }) {
+                    Button(action: onFavouriteTap) {
                         Image("icon.favorite")
                     }.buttonStyle(PlainButtonStyle())
                     Spacer()
@@ -170,5 +187,18 @@ struct UserCardView: View {
             }
         }
         .onTapGesture { onTap() }
+    }
+}
+
+extension FeedUser.Status {
+    var color: Color {
+        switch self {
+        case .online:
+            return Color.green
+        case .offline:
+            return Color.gray
+        case .recently:
+            return Color.yellow
+        }
     }
 }

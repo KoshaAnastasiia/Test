@@ -1,9 +1,8 @@
 import Foundation
 
 class FeedPresenter: ObservableObject, FeedPresenterProtocol {
-    weak var view: FeedViewProtocol?
     var interactor: FeedInteractorProtocol?
-    var router: FeedRouter?
+    var router: FeedRouterProtocol?
 
     @Published var users: [FeedUser] = []
     @Published var errorMessage: String? = nil
@@ -19,16 +18,26 @@ class FeedPresenter: ObservableObject, FeedPresenterProtocol {
             router?.navigateToUserProfile(user)
         }
     }
+
+    func didSelectUserChat(_ user: FeedUser) {
+        router?.navigateToUserChat(user)
+    }
+
+    func didSelectUserVideo(_ user: FeedUser) {
+        router?.navigateToUserVideo(user)
+    }
+
+    func didSelectUserFavourite(_ user: FeedUser) {
+        router?.navigateToUserFavourite(user)
+    }
 }
 
 extension FeedPresenter: FeedInteractorOutputProtocol {
     func didFetchUsers(_ users: [FeedUser]) {
         self.users = users
-        view?.showUsers(users)
     }
 
     func didFailToFetchUsers(error: Error) {
         self.errorMessage = error.localizedDescription
-        view?.showError(error.localizedDescription)
     }
 }

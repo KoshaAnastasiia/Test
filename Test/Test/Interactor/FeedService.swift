@@ -1,6 +1,11 @@
 import Foundation
 
 class FeedService {
+    enum ServiceError: Error {
+        case invalidURL
+        case responseNoData
+    }
+
     struct FeedUserJSON: Decodable {
         let name: String
         let age: Int
@@ -11,7 +16,7 @@ class FeedService {
 
     func fetchUsers(completion: @escaping (Result<[FeedUserJSON], Error>) -> Void) {
         guard let url = URL(string: "https://dummyjson.com/c/cb53-9be5-4af7-a939") else {
-            completion(.failure(NSError(domain: "FeedService", code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
+            completion(.failure(ServiceError.invalidURL))
             return
         }
         URLSession.shared.dataTask(with: url) { data, response, error in
@@ -20,7 +25,7 @@ class FeedService {
                 return
             }
             guard let data = data else {
-                completion(.failure(NSError(domain: "FeedService", code: 1, userInfo: [NSLocalizedDescriptionKey: "No data"])))
+                completion(.failure(ServiceError.responseNoData))
                 return
             }
             do {
@@ -31,4 +36,15 @@ class FeedService {
             }
         }.resume()
     }
-} 
+}
+
+extension FeedService.ServiceError {
+    var localizedDescription: String {
+        switch self {
+        case .invalidURL:
+            "Invalid URL"
+        case .responseNoData:
+            "Response has no data"
+        }
+    }
+}

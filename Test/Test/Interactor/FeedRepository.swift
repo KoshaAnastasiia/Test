@@ -1,6 +1,6 @@
 import Foundation
 
-class FeedInteractor: FeedInteractorProtocol {
+class FeedRepository: FeedInteractorProtocol {
     weak var output: FeedInteractorOutputProtocol?
     let service = FeedService()
 
@@ -15,7 +15,7 @@ class FeedInteractor: FeedInteractorProtocol {
                             age: json.age,
                             countryFlag: json.countryFlag,
                             imageUrl: json.imageUrl,
-                            status: FeedInteractor.statusFromString(json.status)
+                            status: FeedUser.Status(rawValue: json.status) ?? .offline
                         )
                     }
                     self?.output?.didFetchUsers(users)
@@ -25,13 +25,4 @@ class FeedInteractor: FeedInteractorProtocol {
             }
         }
     }
-
-    private static func statusFromString(_ str: String) -> UserStatus {
-        switch str.lowercased() {
-        case "online": return .online
-        case "offline": return .offline
-        case "recently": return .recently
-        default: return .offline
-        }
-    }
-} 
+}

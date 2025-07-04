@@ -1,28 +1,28 @@
 import SwiftUI
 
-enum MainTab: Int, CaseIterable {
-    case live, feed, chat, profile
-
-    var title: String {
-        switch self {
-        case .live: return "Live"
-        case .feed: return "Feed"
-        case .chat: return "Chat"
-        case .profile: return "Profile"
-        }
-    }
-
-    var icon: String {
-        switch self {
-        case .live: return "icon.life"
-        case .feed: return "icon.feed"
-        case .chat: return "icon.chat.tab"
-        case .profile: return "icon.profile"
-        }
-    }
-}
-
 struct MainTabView: View {
+    enum MainTab: Int, CaseIterable {
+        case live, feed, chat, profile
+
+        var title: String {
+            switch self {
+            case .live: return "Live"
+            case .feed: return "Feed"
+            case .chat: return "Chat"
+            case .profile: return "Profile"
+            }
+        }
+
+        var icon: String {
+            switch self {
+            case .live: return "icon.life"
+            case .feed: return "icon.feed"
+            case .chat: return "icon.chat.tab"
+            case .profile: return "icon.profile"
+            }
+        }
+    }
+
     @State private var selectedTab: MainTab = .feed
 
     var body: some View {
@@ -33,7 +33,7 @@ struct MainTabView: View {
                     Color.pink.ignoresSafeArea()
                         .transition(.opacity)
                 case .feed:
-                    FeedModuleBuilder.build()
+                    FeedModuleBuilder().build()
                         .transition(.opacity)
                 case .chat:
                     Color.indigo.ignoresSafeArea()
@@ -50,11 +50,11 @@ struct MainTabView: View {
 }
 
 struct CustomTabBar: View {
-    @Binding var selectedTab: MainTab
+    @Binding var selectedTab: MainTabView.MainTab
     
     var body: some View {
         HStack(alignment: .top) {
-            ForEach(MainTab.allCases, id: \.self) { tab in
+            ForEach(MainTabView.MainTab.allCases, id: \.self) { tab in
                 Spacer()
                 Button(action: { selectedTab = tab }) {
                     VStack(spacing: 4) {

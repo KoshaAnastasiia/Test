@@ -1,30 +1,13 @@
 import SwiftUI
 
-struct PaywallScreen: Identifiable {
-    let id = UUID()
-    let imageName: String
-    let title: AttributedString
-}
-
 struct PaywallCarouselView: View {
-    let screens: [PaywallScreen] = [
-            PaywallScreen(
-                imageName: "payscreen.first",
-                title: "Get 599 Coins NOW And Every Week".makeAttributedForPaywallTitle(selected: "599 Coins")
-            ),
-            PaywallScreen(
-                imageName: "payscreen.second",
-                title: "Send Unlimited Messages".makeAttributedForPaywallTitle(selected: "Unlimited Messages")
-            ),
-            PaywallScreen(
-                imageName: "payscreen.third",
-                title: "Turn Off Camera & Sound".makeAttributedForPaywallTitle(selected: "Camera & Sound")
-            ),
-            PaywallScreen(
-                imageName: "payscreen.forth",
-                title: "Mark Your Profile With VIP Status".makeAttributedForPaywallTitle(selected: "VIP Status")
-            )
-        ]
+    struct PaywallScreen: Identifiable {
+        let id = UUID()
+        let imageName: String
+        let title: AttributedString
+    }
+
+    let screens: [PaywallScreen] = .mockedValues()
 
     @Environment(\.presentationMode) var presentationMode
     @State private var selectedIndex: Int = 0
@@ -122,5 +105,28 @@ struct PaywallCarouselView: View {
         }
         .ignoresSafeArea(edges: .bottom)
         .navigationBarBackButtonHidden(true)
+    }
+}
+
+extension [PaywallCarouselView.PaywallScreen] {
+    static func mockedValues() -> [PaywallCarouselView.PaywallScreen] {
+        [
+            PaywallCarouselView.PaywallScreen(
+                imageName: "payscreen.first",
+                title: "Get 599 Coins NOW And Every Week".makeAttributedForPaywallTitle(selected: "599 Coins")
+            ),
+            PaywallCarouselView.PaywallScreen(
+                imageName: "payscreen.second",
+                title: "Send Unlimited Messages".makeAttributedForPaywallTitle(selected: "Unlimited Messages")
+            ),
+            PaywallCarouselView.PaywallScreen(
+                imageName: "payscreen.third",
+                title: "Turn Off Camera & Sound".makeAttributedForPaywallTitle(selected: "Camera & Sound")
+            ),
+            PaywallCarouselView.PaywallScreen(
+                imageName: "payscreen.forth",
+                title: "Mark Your Profile With VIP Status".makeAttributedForPaywallTitle(selected: "VIP Status")
+            )
+        ]
     }
 }
