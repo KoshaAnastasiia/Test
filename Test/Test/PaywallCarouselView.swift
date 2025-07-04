@@ -93,12 +93,14 @@ struct PaywallCarouselView: View {
                     Button(action: {}) {
                         Text("Terms of Use")
                             .font(.system(size: 12, weight: .light))
+                            .underline()
                             .foregroundStyle(Color.white)
                     }
                     Spacer()
                     Button(action: {}) {
                         Text("Privacy & Policy")
                             .font(.system(size: 12, weight: .light))
+                            .underline()
                             .foregroundStyle(Color.white)
                     }
                 }.padding(.bottom, 90)
