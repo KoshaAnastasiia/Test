@@ -55,19 +55,26 @@ struct PaywallCarouselView: View {
                             .multilineTextAlignment(.center)
                             .frame(width: 331, height: 58)
                         Image(screen.imageName)
-                            .padding(.bottom, 50)
                     }
                     .tag(idx)
                 }
             }
-            .tabViewStyle(PageTabViewStyle())
+            .tabViewStyle(.page(indexDisplayMode: .never))
+            .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .never))
+            HStack(spacing: 10) {
+                ForEach(0..<screens.count, id: \.self) { idx in
+                    Circle()
+                        .fill(idx == selectedIndex ? Color.rgba(157, 153, 255, 1) : Color.rgba(175, 182, 200, 1))
+                        .frame(width: 8, height: 8)
+                }
+            }
             Spacer()
             VStack(spacing: 0) {
                 Text("Subscribe for $0.99 weekly")
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundStyle(Color.white)
                     .padding(.bottom, 6)
-                    .padding(.top, 30)
+                    .padding(.top, 60)
                 Text("Plan automatically renews. Cancel anytime.")
                     .font(.system(size: 14, weight: .regular))
                     .foregroundStyle(Color.white)
@@ -94,14 +101,24 @@ struct PaywallCarouselView: View {
                             .font(.system(size: 12, weight: .light))
                             .foregroundStyle(Color.white)
                     }
-                }.padding(.bottom, 60)
+                }.padding(.bottom, 90)
             }.padding(.horizontal, 16)
-            .background(
-                LinearGradient(gradient: Gradient(colors: [Color.blue.opacity(0.7), Color.purple.opacity(0.7)]), startPoint: .top, endPoint: .bottom)
-            )
+                .background(
+                    GeometryReader { geometry in
+                        let width = geometry.size.width
+                        let height = geometry.size.height
+                        Path { path in
+                            path.move(to: CGPoint(x: 0, y: height))
+                            path.addLine(to: CGPoint(x: width, y: height))
+                            path.addLine(to: CGPoint(x: width, y: 0))
+                            path.addQuadCurve(to: CGPoint(x: 0, y: 0), control: CGPoint(x: width / 2, y: height * 0.2))
+                            path.addLine(to: CGPoint(x: 0, y: height))
+                        }
+                        .fill(LinearGradient(gradient: Gradient(colors: [Color.rgba(157, 153, 255, 1), Color.blue.opacity(0.7)]), startPoint: .top, endPoint: .bottom))
+                    }
+                )
         }
         .ignoresSafeArea(edges: .bottom)
-//        .background(Color.green)
         .navigationBarBackButtonHidden(true)
     }
 }
